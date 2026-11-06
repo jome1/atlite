@@ -336,16 +336,16 @@ def cutout_prepare(
             else:
                 write_job.compute(**dask_kwargs)
             del write_job
-        if cutout.path.exists():
+            if cutout.path.exists():
                 cutout.data.close()
                 # release lazily opened handles of the old file (Windows cannot
-            # replace files that are still open)
-            gc.collect()
-            cutout.path.unlink()
+                # replace files that are still open)
+                gc.collect()
+                cutout.path.unlink()
             _rename_with_retry(Path(tmp), cutout.path)
 
             cutout.data = xr.open_dataset(cutout.path, chunks="auto")
-            del ds, write_job
+            del ds
     finally:
         # Remove raw files that modules downloaded into tmpdir (e.g. SARAH API)
         for module in target.index.unique("module"):
